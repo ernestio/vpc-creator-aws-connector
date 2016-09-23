@@ -119,7 +119,7 @@ func TestEvent(t *testing.T) {
 				Convey("It should produce a vpc.create.aws.error event", func() {
 					msg, timeout := waitMsg(errored)
 					So(msg, ShouldNotBeNil)
-					So(string(msg.Data), ShouldContainSubstring, `"error":"error"`)
+					So(string(msg.Data), ShouldContainSubstring, `"error_message":"error"`)
 					So(timeout, ShouldBeNil)
 					msg, timeout = waitMsg(completed)
 					So(msg, ShouldBeNil)
@@ -131,7 +131,7 @@ func TestEvent(t *testing.T) {
 
 		Convey("With no datacenter vpc id", func() {
 			testEventInvalid := testEvent
-			testEventInvalid.VpcID = ""
+			testEventInvalid.DatacenterRegion = ""
 			invalid, _ := json.Marshal(testEventInvalid)
 
 			Convey("When validating the event", func() {
@@ -140,7 +140,7 @@ func TestEvent(t *testing.T) {
 				err := e.Validate()
 				Convey("It should error", func() {
 					So(err, ShouldNotBeNil)
-					So(err.Error(), ShouldEqual, "Datacenter VPC ID invalid")
+					So(err.Error(), ShouldEqual, ErrDatacenterRegionInvalid.Error())
 				})
 			})
 		})
